@@ -1,34 +1,33 @@
-﻿jQuery.fn.mousehold = function (f) {
-    var timeout = 100;
-    if (f && typeof f == 'function') {
-        var intervalId = 0;
-        var firstStep = false;
-        var clearMousehold = undefined;
-        return this.each(function () {
-            $(this).mousedown(function () {
-                firstStep = true;
-                var ctr = 0;
-                var t = this;
-                intervalId = setInterval(function () {
-                    ctr++;
-                    f.call(t, ctr);
+﻿define(["jquery"], function ($) {
+    jQuery.fn.mousehold = function (f) {
+        var timeout = 100;
+        if (f && typeof f == 'function') {
+            var intervalId = 0;
+            var firstStep = false;
+            var clearMousehold = undefined;
+            return this.each(function () {
+                $(this).mousedown(function () {
+                    firstStep = true;
+                    var ctr = 0;
+                    var t = this;
+                    intervalId = setInterval(function () {
+                        ctr++;
+                        f.call(t, ctr);
+                        firstStep = false;
+                    }, timeout);
+                });
+
+                clearMousehold = function () {
+                    clearInterval(intervalId);
+                    if (firstStep) f.call(this, 1);
                     firstStep = false;
-                }, timeout);
+                };
+
+                $(this).mouseout(clearMousehold);
+                $(this).mouseup(clearMousehold);
             });
-
-            clearMousehold = function () {
-                clearInterval(intervalId);
-                if (firstStep) f.call(this, 1);
-                firstStep = false;
-            };
-
-            $(this).mouseout(clearMousehold);
-            $(this).mouseup(clearMousehold);
-        });
-    }
-};
-
-!function ($) {
+        }
+    };
 
     var SpinEdit = function (element, options) {
         this.element = $(element);
@@ -190,4 +189,4 @@
       '<span class="glyphicon glyphicon-chevron-up"></span>' +
     '</span>';
 
-}(window.jQuery);
+}(window.jQuery));
